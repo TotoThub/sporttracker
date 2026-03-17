@@ -41,12 +41,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe()
   }, [])
 
-  // Assign pre-seeded exercises (user_id = null) to the first user who logs in
+  // Duplicate base exercises for new users via server-side function (bypasses RLS)
   const claimOrphanExercises = async (userId: string) => {
-    await supabase
-      .from('exercises')
-      .update({ user_id: userId })
-      .is('user_id', null)
+    await supabase.rpc('claim_orphan_exercises', { target_user_id: userId })
   }
 
   const signUp = async (email: string, password: string) => {
