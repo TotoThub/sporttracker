@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { Session, SessionExercise, ExerciseSet } from '../types'
+import { useAuth } from './useAuth'
 
 export function useSessions() {
+  const { user } = useAuth()
   const [sessions, setSessions] = useState<Session[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -28,7 +30,7 @@ export function useSessions() {
   const createSession = async (session: { date: string; notes?: string }) => {
     const { data, error } = await supabase
       .from('sessions')
-      .insert({ ...session, completed: false })
+      .insert({ ...session, completed: false, user_id: user?.id })
       .select()
       .single()
 

@@ -1,5 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
+import { useAuth } from './hooks/useAuth'
 import Layout from './components/Layout'
+import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Exercises from './pages/Exercises'
 import Templates from './pages/Templates'
@@ -11,6 +13,21 @@ import Stats from './pages/Stats'
 import Goals from './pages/Goals'
 
 export default function App() {
+  const { user, loading } = useAuth()
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center"
+           style={{ background: '#060a13' }}>
+        <div className="w-10 h-10 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
+  }
+
+  if (!user) {
+    return <Login />
+  }
+
   return (
     <Layout>
       <Routes>

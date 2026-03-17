@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { Exercise, MuscleGroup, Equipment } from '../types'
+import { useAuth } from './useAuth'
 
 export function useExercises() {
+  const { user } = useAuth()
   const [exercises, setExercises] = useState<Exercise[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -33,7 +35,7 @@ export function useExercises() {
   }) => {
     const { data, error } = await supabase
       .from('exercises')
-      .insert(exercise)
+      .insert({ ...exercise, user_id: user?.id })
       .select()
       .single()
 

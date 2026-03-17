@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { Goal, GlobalGoalType } from '../types'
+import { useAuth } from './useAuth'
 
 export function useGoals() {
+  const { user } = useAuth()
   const [goals, setGoals] = useState<Goal[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -39,6 +41,7 @@ export function useGoals() {
         goal_scope: 'exercise',
         current_value: goal.current_value ?? 0,
         achieved: false,
+        user_id: user?.id,
       })
       .select('*, exercise:exercises(*)')
       .single()
@@ -70,6 +73,7 @@ export function useGoals() {
         current_value: goal.current_value ?? 0,
         target_date: goal.target_date ?? null,
         achieved: false,
+        user_id: user?.id,
       })
       .select()
       .single()

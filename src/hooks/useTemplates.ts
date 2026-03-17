@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { WorkoutTemplate, WorkoutTemplateExercise } from '../types'
+import { useAuth } from './useAuth'
 
 export function useTemplates() {
+  const { user } = useAuth()
   const [templates, setTemplates] = useState<WorkoutTemplate[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -28,7 +30,7 @@ export function useTemplates() {
   const createTemplate = async (template: { name: string; description?: string; color?: string }) => {
     const { data, error } = await supabase
       .from('workout_templates')
-      .insert({ ...template, color: template.color ?? 'blue' })
+      .insert({ ...template, color: template.color ?? 'blue', user_id: user?.id })
       .select()
       .single()
 
@@ -142,6 +144,7 @@ export function useTemplates() {
         template_id: templateId,
         notes: `Programme : ${template.name}`,
         completed: false,
+        user_id: user?.id,
       })
       .select()
       .single()

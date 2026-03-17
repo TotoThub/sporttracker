@@ -2,13 +2,15 @@ import { useNavigate } from 'react-router-dom'
 import { useSessions } from '../hooks/useSessions'
 import { useGoals } from '../hooks/useGoals'
 import { useTemplates } from '../hooks/useTemplates'
+import { useAuth } from '../hooks/useAuth'
 import { TEMPLATE_COLORS } from '../types'
-import { Plus, TrendingUp, Calendar, Target, Flame, Play, ArrowRight } from 'lucide-react'
+import { Plus, TrendingUp, Calendar, Target, Flame, Play, ArrowRight, LogOut } from 'lucide-react'
 import { format, isThisWeek, isThisMonth, parseISO } from 'date-fns'
 import { fr } from 'date-fns/locale'
 
 export default function Dashboard() {
   const navigate = useNavigate()
+  const { signOut } = useAuth()
   const { sessions, loading: loadingSessions } = useSessions()
   const { goals, loading: loadingGoals } = useGoals()
   const { templates, loading: loadingTemplates, startSessionFromTemplate } = useTemplates()
@@ -35,10 +37,14 @@ export default function Dashboard() {
           <p className="text-sm text-slate-500 mb-0.5">{format(new Date(), "EEEE d MMMM", { locale: fr })}</p>
           <h1 className="text-3xl font-bold text-white">Sport Tracker</h1>
         </div>
-        <button onClick={() => navigate('/session/new')} className="btn-primary !py-2.5 !px-4">
-          <Plus size={18} />
-          <span className="hidden sm:inline">Séance</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={() => navigate('/session/new')} className="btn-primary !py-2.5 !px-4">
+            <Plus size={18} />
+          </button>
+          <button onClick={signOut} className="w-10 h-10 rounded-xl bg-white/[0.05] flex items-center justify-center hover:bg-white/[0.08] transition-colors" title="Déconnexion">
+            <LogOut size={17} className="text-slate-500" />
+          </button>
+        </div>
       </div>
 
       {loading ? (

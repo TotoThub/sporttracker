@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { BodyMeasurement } from '../types'
+import { useAuth } from './useAuth'
 
 export interface ExerciseProgress {
   exercise_id: string
@@ -31,6 +32,7 @@ export interface WeeklyVolume {
 }
 
 export function useStats() {
+  const { user } = useAuth()
   const [exerciseProgress, setExerciseProgress] = useState<ExerciseProgress[]>([])
   const [muscleGroupStats, setMuscleGroupStats] = useState<MuscleGroupStats[]>([])
   const [weeklyVolume, setWeeklyVolume] = useState<WeeklyVolume[]>([])
@@ -191,7 +193,7 @@ export function useStats() {
   const addBodyMeasurement = async (measurement: { date: string; weight_kg?: number; body_fat_percent?: number; notes?: string }) => {
     const { data, error } = await supabase
       .from('body_measurements')
-      .insert(measurement)
+      .insert({ ...measurement, user_id: user?.id })
       .select()
       .single()
 
